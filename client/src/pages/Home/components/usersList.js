@@ -6,7 +6,7 @@ import { setAllchats, setSelectedChat } from "../../../redux/usersSlice";
 
 function UsersList({searchKey}) {
     const dispatch = useDispatch();
-    const {allUsers, allChats, user: currentUser, selectedChat} = useSelector((state) => state.userReducer);
+    const {allUsers, allChats, user: currentUser} = useSelector((state) => state.userReducer);
 
     const startNewChat = async (searchedUserId) => {
         let response;
