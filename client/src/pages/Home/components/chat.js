@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {createNewMessage, getAllMessages} from './../../../apiCalls/message';
 import {toast} from 'react-hot-toast';
 import {showLoader, hideLoader} from './../../../redux/loaderSlice';
+import moment from 'moment';
 
 function ChatArea() {
     const dispatch = useDispatch();
@@ -48,6 +49,19 @@ function ChatArea() {
         }
     }
 
+    const formatTime = (timestamp) => {
+        const now = moment();
+        const diff = now.diff(moment(timestamp), 'days');
+
+        if(diff < 1) {
+            return `Today ${moment(timestamp).format('hh:mm A')}`;
+        } else if(diff === 1) {
+            return `Yesterday ${moment(timestamp).format('hh:mm A')}`;
+        } else {
+            return moment(timestamp).format('MMM D, hh:mm A');
+        }
+    }
+
     useEffect(() => {
         getMessages();
     }, [selectedChat]);
@@ -64,8 +78,15 @@ function ChatArea() {
                         return <div className="message-container" 
                                 style={isCurrentUserSender ? {justifyContent: 'end'} : {justifyContent: 'start'}}
                             >
-                            <div className={isCurrentUserSender ? "send-message" : "received-message"}>
-                                {msg.text}
+                            <div>
+                                <div className={isCurrentUserSender ? "send-message" : "received-message"}>
+                                    {msg.text}
+                                </div>
+                                <div className='message-timestamp'
+                                    style={isCurrentUserSender ? {float: 'right'} : {float: 'left'}}
+                                >
+                                    {formatTime(msg.createdAt)}
+                                </div>
                             </div>
                         </div>
                     })
