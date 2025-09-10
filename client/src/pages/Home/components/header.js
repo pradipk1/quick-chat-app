@@ -4,8 +4,8 @@ function Header() {
     const {user} = useSelector((state) => state.userReducer);
     
     function getFullname() {
-        const fname = user?.firstname.toUpperCase();
-        const lname = user?.lastname.toUpperCase();
+        const fname = user?.firstname[0].toUpperCase() + user?.firstname.slice(1).toLowerCase();
+        const lname = user?.lastname[0].toUpperCase() + user?.lastname.slice(1).toLowerCase();
         return fname + ' ' + lname;
     }
 

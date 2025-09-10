@@ -499,6 +499,9 @@ i{
 .main-chat-area::-webkit-scrollbar-thumb:hover {
     background: #e74c3c; 
 }
+.last-message-timestamp{
+  font-size: 13px;
+}
 
 
 

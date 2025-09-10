@@ -62,6 +62,12 @@ function ChatArea() {
         }
     }
 
+    const formatName = (user) => {
+        const fname = user.firstname[0].toUpperCase() + user.firstname.slice(1).toLowerCase();
+        const lname = user.lastname[0].toUpperCase() + user.lastname.slice(1).toLowerCase();
+        return fname + ' ' + lname;
+    }
+
     useEffect(() => {
         getMessages();
     }, [selectedChat]);
@@ -69,7 +75,7 @@ function ChatArea() {
     return (
         <div className="app-chat-area">
             <div className="app-chat-area-header">
-                {selectedUser.firstname + ' ' + selectedUser.lastname}
+                {formatName(selectedUser)}
             </div>
             <div className='main-chat-area'>
                 {
