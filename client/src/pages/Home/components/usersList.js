@@ -68,6 +68,18 @@ function UsersList({searchKey}) {
         }
     }
 
+    const getUnreadMessageCount = (userId) => {
+        const chat = allChats.find(chat => 
+            chat.members.map(m => m._id).includes(userId)
+        );
+
+        if(chat && chat.unreadMessageCount && chat.lastMessage.sender !== currentUser._id) {
+            return <div className="unread-message-counter">{chat.unreadMessageCount}</div>;
+        } else {
+            return "";
+        }
+    }
+
     const formatName = (user) => {
         const fname = user.firstname[0].toUpperCase() + user.firstname.slice(1).toLowerCase();
         const lname = user.lastname[0].toUpperCase() + user.lastname.slice(1).toLowerCase();
@@ -91,14 +103,15 @@ function UsersList({searchKey}) {
                                 }
                             </div>}
                             <div className="filter-user-details">
-                                <div className="user-display-name">
-                                    {formatName(user)}
-                                </div>
+                                <div className="user-display-name">{formatName(user)}</div>
                                 <div className="user-display-email">
                                     {getLastMessage(user._id) || user.email}
                                 </div>
                             </div>
-                            <div className="last-message-timestamp">{getLastMessageTimestamp(user._id)}</div>
+                            <div>
+                                {getUnreadMessageCount(user._id)}
+                                <div className="last-message-timestamp">{getLastMessageTimestamp(user._id)}</div>
+                            </div>
                             {
                                 !allChats.find(chat => chat.members.map(member => member._id).includes(user._id)) &&
                                 <div className="user-start-chat">

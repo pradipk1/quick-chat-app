@@ -91,7 +91,9 @@ function ChatArea() {
 
     useEffect(() => {
         getMessages();
-        clearUnreadMessages();
+        if(selectedChat.lastMessage.sender !== currentUser._id) {
+            clearUnreadMessages();
+        }
     }, [selectedChat]);
 
     return (
