@@ -6,20 +6,25 @@ import {io} from 'socket.io-client';
 import { useEffect } from "react";
 
 function Home() {
-    const {selectedChat} = useSelector(state => state.userReducer);
+    const {selectedChat, user: currentUser} = useSelector(state => state.userReducer);
 
     // making a socket connection with server
     const socket = io('http://localhost:5000');
 
     useEffect(() => {
-        // emiting an event from socket
-        socket.emit('send-message-all', {text: 'Hi from John'});
+        if(currentUser) {
+            // emiting join-room event from client
+            socket.emit('join-room', currentUser._id);
 
-        // listening an event coming from server
-        socket.on('send-message-by-server', data => {
-            console.log(data);
-        })
-    }, []);
+            // emiting send-message event from client
+            socket.emit('send-message', {text: 'Hi Merry!', recipient: '68ab484c9eb1e25134f6d280'});
+
+            // listening receive-message event coming from server
+            socket.on('receive-message', (data) => {
+                console.log(data);
+            });
+        }
+    }, [currentUser]);
 
     return (
         <div className="home-page">
