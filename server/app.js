@@ -28,8 +28,12 @@ app.use('/api/message', messageRouter);
 
 // test socket connetion from client
 io.on('connection', socket => {
-    console.log('Connected with SocketId: ' + socket.id);
-})
+    // listening an event coming from client
+    socket.on('send-message-all', data => {
+        // emiting an event from server
+        socket.emit('send-message-by-server', 'Message from server: ' + data.text);
+    });
+});
 
 
 module.exports = server;
