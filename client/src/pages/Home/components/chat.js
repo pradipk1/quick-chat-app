@@ -6,7 +6,7 @@ import {showLoader, hideLoader} from './../../../redux/loaderSlice';
 import moment from 'moment';
 import { clearUnreadMessageCount } from '../../../apiCalls/chat';
 
-function ChatArea() {
+function ChatArea({socket}) {
     const dispatch = useDispatch();
     const { selectedChat, user: currentUser, allChats } = useSelector(state => state.userReducer);
     const selectedUser = selectedChat.members.find(member => member._id !== currentUser._id);
@@ -22,15 +22,20 @@ function ChatArea() {
                 text: message
             }
 
-            dispatch(showLoader());
+            socket.emit('send-message', {
+                ...newMessage,
+                members: selectedChat.members.map(m => m._id),
+                read: false,
+                createdAt: moment().format('hh:mm A')
+            });
+            console.log(moment().format('hh:mm A'));
+
             response = await createNewMessage(newMessage);
-            dispatch(hideLoader());
 
             if(response.success) {
                 setMessage('');
             }
         } catch (error) {
-            dispatch(hideLoader());
             toast.error(response.message);
         }
     }
@@ -94,6 +99,10 @@ function ChatArea() {
         if(selectedChat?.lastMessage?.sender !== currentUser._id) {
             clearUnreadMessages();
         }
+
+        socket.off('receive-message').on('receive-message', data => {
+            setAllMessages(prevmsg => [...prevmsg, data]);
+        });
     }, [selectedChat]);
 
     return (

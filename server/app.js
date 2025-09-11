@@ -34,9 +34,12 @@ io.on('connection', socket => {
     });
 
     // listening send-message event coming from client
-    socket.on('send-message', (data) => {
+    socket.on('send-message', (message) => {
         // sending data to a specific client using socket.to() method
-        socket.to(data.recipient).emit('receive-message', data.text);
+        io
+        .to(message.members[0])
+        .to(message.members[1])
+        .emit('receive-message', message);
     });
 });
 
