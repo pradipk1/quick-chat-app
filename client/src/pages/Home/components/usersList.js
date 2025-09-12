@@ -4,8 +4,10 @@ import {createNewChat} from './../../../apiCalls/chat';
 import { hideLoader, showLoader } from "../../../redux/loaderSlice";
 import { setAllchats, setSelectedChat } from "../../../redux/usersSlice";
 import moment from "moment";
+import store from './../../../redux/store';
+import { useEffect } from "react";
 
-function UsersList({searchKey}) {
+function UsersList({searchKey, socket}) {
     const dispatch = useDispatch();
     const {allUsers, allChats, user: currentUser, selectedChat} = useSelector((state) => state.userReducer);
 
@@ -96,6 +98,27 @@ function UsersList({searchKey}) {
             ));
         }
     }
+
+    useEffect(() => {
+        socket.on('receive-message', (message) => {
+            const selectedChat = store.getState().userReducer.selectedChat;
+            const allChats = store.getState().userReducer.allChats;
+
+            if(selectedChat?._id !== message.chatId) {
+                const updatedAllChats = allChats.map(chat => {
+                    if(chat._id === message.chatId) {
+                        return {
+                            ...chat,
+                            unreadMessageCount: (chat?.unreadMessageCount || 0) + 1,
+                            lastMessage: message
+                        }
+                    }
+                    return chat;
+                });
+                dispatch(setAllchats(updatedAllChats));
+            }
+        });
+    }, []);
 
     return (
         getData()
