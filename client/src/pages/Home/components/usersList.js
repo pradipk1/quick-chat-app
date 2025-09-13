@@ -7,7 +7,7 @@ import moment from "moment";
 import store from './../../../redux/store';
 import { useEffect } from "react";
 
-function UsersList({searchKey, socket}) {
+function UsersList({searchKey, socket, onlineUsers}) {
     const dispatch = useDispatch();
     const {allUsers, allChats, user: currentUser, selectedChat} = useSelector((state) => state.userReducer);
 
@@ -142,8 +142,15 @@ function UsersList({searchKey, socket}) {
                 <div className="user-search-filter" onClick={() => {openChat(user._id)}} key={user._id}>
                     <div className={isSelectedChat(user) ? "selected-user" : "filtered-user"}>
                         <div className="filter-user-display">
-                            {user.profilePic && <img src={user.profilePic} alt="Profile Pic" className="user-profile-image" />}
-                            {!user.profilePic && <div className={isSelectedChat(user) ? "user-selected-avatar" : "user-default-avatar"}>
+                            {user.profilePic && <img src={user.profilePic} 
+                                                    alt="Profile Pic" 
+                                                    className="user-profile-image" 
+                                                    style={onlineUsers.includes(user._id) ? {border: '3px solid green'} : {}}
+                                                />}
+                            {!user.profilePic && <div 
+                                                    className={isSelectedChat(user) ? "user-selected-avatar" : "user-default-avatar"}
+                                                    style={onlineUsers.includes(user._id) ? {border: '3px solid green'} : {}}
+                                                >
                                 {
                                     user.firstname[0].toUpperCase() + user.lastname[0].toUpperCase()
                                 }

@@ -26,11 +26,14 @@ app.use('/api/user', userRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/message', messageRouter);
 
+// creating an array containing all the online users
+const onlineUsers = [];
+
 // test socket connetion from client
 io.on('connection', socket => {
-    // listening join-room event coming from client
-    socket.on('join-room', userid => {
-        socket.join(userid);
+    // listening and joining join-room event coming from client
+    socket.on('join-room', userId => {
+        socket.join(userId);
     });
 
     // listening send-message event coming from client
@@ -54,6 +57,14 @@ io.on('connection', socket => {
         .to(data.members[0])
         .to(data.members[1])
         .emit('started-typing', data);
+    });
+
+    socket.on('user-login', userId => {
+        if(!onlineUsers.includes(userId)) {
+            onlineUsers.push(userId);
+        }
+
+        socket.emit('online-users', onlineUsers);
     });
 });
 

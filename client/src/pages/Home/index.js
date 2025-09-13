@@ -3,18 +3,24 @@ import ChatArea from "./components/chat";
 import Header from "./components/header";
 import Sidebar from "./components/sidebar";
 import {io} from 'socket.io-client';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // making a socket connection with server
 const socket = io('http://localhost:5000');
 
 function Home() {
     const {selectedChat, user: currentUser} = useSelector(state => state.userReducer);
+    const [onlineUsers, setOnlineUsers] = useState([]);
 
     useEffect(() => {
         if(currentUser) {
             // emiting join-room event from client
             socket.emit('join-room', currentUser._id);
+
+            socket.emit('user-login', currentUser._id);
+            socket.on('online-users', onlineUsers => {
+                setOnlineUsers(onlineUsers);
+            });
         }
     }, [currentUser]);
 
@@ -22,7 +28,7 @@ function Home() {
         <div className="home-page">
             <Header />
             <div className="main-content">
-                <Sidebar socket={socket} />
+                <Sidebar socket={socket} onlineUsers={onlineUsers} />
                 {selectedChat && <ChatArea socket={socket} />}
             </div>
         </div>
