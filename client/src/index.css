@@ -515,6 +515,11 @@ i{
   color: white;
 }
 
+.typing-indicator {
+  font-size: 13px;
+  color: grey;
+}
+
 
 
 /*****************************************************
@@ -522,10 +527,10 @@ i{
 ******************************************************/
 
 @media only screen and (max-width: 1000px) {
-    .filter-user-details {
+    .filter-user-details, .last-message-timestamp {
       display: none;
     }
-    .user-search-area {
+    .user-search-area, .unread-message-counter {
         display: none;
     }
     .app-sidebar{

@@ -48,6 +48,13 @@ io.on('connection', socket => {
         .to(data.members[1])
         .emit('unread-message-count-cleared', data);
     });
+
+    socket.on('user-typing', data => {
+        io
+        .to(data.members[0])
+        .to(data.members[1])
+        .emit('started-typing', data);
+    });
 });
 
 
