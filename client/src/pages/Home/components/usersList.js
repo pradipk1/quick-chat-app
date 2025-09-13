@@ -101,8 +101,7 @@ function UsersList({searchKey, socket}) {
 
     useEffect(() => {
         socket.on('receive-message', (message) => {
-            const {selectedChat, allChats} = store.getState().userReducer;
-            // const allChats = store.getState().userReducer.allChats;
+            let {selectedChat, allChats} = store.getState().userReducer;
 
             if(selectedChat?._id !== message.chatId) {
                 const updatedAllChats = allChats.map(chat => {
@@ -115,8 +114,20 @@ function UsersList({searchKey, socket}) {
                     }
                     return chat;
                 });
-                dispatch(setAllchats(updatedAllChats));
+                allChats = updatedAllChats;
             }
+
+            // sorting user list in real time
+            // 1. find latest chat
+            const latestChat = allChats.find(chat => chat._id === message.chatId);
+
+            // 2. find all other chats
+            const otherChats = allChats.filter(chat => chat._id !== message.chatId);
+
+            // create a new array having the latest chat on top
+            allChats = [latestChat, ...otherChats];
+
+            dispatch(setAllchats(allChats));
         });
     }, []);
 
