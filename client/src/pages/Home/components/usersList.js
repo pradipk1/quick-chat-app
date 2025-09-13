@@ -101,8 +101,8 @@ function UsersList({searchKey, socket}) {
 
     useEffect(() => {
         socket.on('receive-message', (message) => {
-            const selectedChat = store.getState().userReducer.selectedChat;
-            const allChats = store.getState().userReducer.allChats;
+            const {selectedChat, allChats} = store.getState().userReducer;
+            // const allChats = store.getState().userReducer.allChats;
 
             if(selectedChat?._id !== message.chatId) {
                 const updatedAllChats = allChats.map(chat => {

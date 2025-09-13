@@ -6,6 +6,7 @@ import {showLoader, hideLoader} from './../../../redux/loaderSlice';
 import moment from 'moment';
 import { clearUnreadMessageCount } from '../../../apiCalls/chat';
 import store from './../../../redux/store';
+import { setAllchats } from '../../../redux/usersSlice';
 
 function ChatArea({socket}) {
     const dispatch = useDispatch();
@@ -57,9 +58,12 @@ function ChatArea({socket}) {
 
     const clearUnreadMessages = async () => {
         try {
-            dispatch(showLoader());
+            socket.emit('clear-unread-messages', {
+                chatId: selectedChat._id,
+                members: selectedChat.members.map(m => m._id)
+            });
+
             const response = await clearUnreadMessageCount(selectedChat._id);
-            dispatch(hideLoader());
 
             if(response.success) {
                 allChats.map(chat => {
@@ -70,7 +74,6 @@ function ChatArea({socket}) {
                 });
             }
         } catch (error) {
-            dispatch(hideLoader());
             toast.error(error.message);
         }
     }
@@ -100,10 +103,37 @@ function ChatArea({socket}) {
             clearUnreadMessages();
         }
 
-        socket.on('receive-message', data => {
+        socket.on('receive-message', message => {
             const selectedChat = store.getState().userReducer.selectedChat;
+
+            if(selectedChat._id === message.chatId) {
+                setAllMessages(prevmsg => [...prevmsg, message]);
+            }
+
+            if(selectedChat._id === message.chatId && message.sender !== currentUser._id) {
+                clearUnreadMessages();
+            }
+        });
+
+        socket.on('unread-message-count-cleared', data => {
+            const {selectedChat, allChats} = store.getState().userReducer;
+
             if(selectedChat._id === data.chatId) {
-                setAllMessages(prevmsg => [...prevmsg, data]);
+                // clearing unread message count in chat object
+                const updatedAllChats = allChats.map(chat => {
+                    if(chat._id === data.chatId) {
+                        return {...chat, unreadMessageCount: 0}
+                    }
+                    return chat;
+                });
+                dispatch(setAllchats(updatedAllChats));
+
+                // updating read property to true in message object
+                setAllMessages(prevMsgs => {
+                    return prevMsgs.map(msg => {
+                        return {...msg, read: true}
+                    });
+                });
             }
         });
     }, [selectedChat]);
