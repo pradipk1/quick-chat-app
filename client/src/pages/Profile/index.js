@@ -66,23 +66,23 @@ function Profile() {
     }, [currentUser]);
 
     return (
-        <div class="profile-page-container">
-            <div class="profile-pic-container">
+        <div className="profile-page-container">
+            <div className="profile-pic-container">
                 {
                     image && <img src={image} 
                         alt="Profile Pic" 
-                        class="user-profile-pic-upload" 
+                        className="user-profile-pic-upload" 
                     />
                 }
                 {
-                    !image && <div class="user-default-profile-avatar">
+                    !image && <div className="user-default-profile-avatar">
                         {getInitials()}
                     </div>
                 }
             </div>
 
-            <div class="profile-info-container">
-                <div class="user-profile-name">
+            <div className="profile-info-container">
+                <div className="user-profile-name">
                     <h1>{getFullname()}</h1>
                 </div>
                 <div>
@@ -91,7 +91,7 @@ function Profile() {
                 <div>
                     <b>Account Created: </b>{moment(currentUser?.createdAt).format('MMM DD YYYY')}
                 </div>
-                <div class="select-profile-pic-container">
+                <div className="select-profile-pic-container">
                     <input type="file" onChange={onFileSelect} />
                     <button className="upload-image-btn" onClick={updateProfilePic}>
                         Upload

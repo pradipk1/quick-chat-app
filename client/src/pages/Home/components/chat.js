@@ -18,14 +18,15 @@ function ChatArea({socket}) {
     const [isTyping, setIsTyping] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-    const sendMesage = async () => {
+    const sendMesage = async (image) => {
         setShowEmojiPicker(false);
         let response;
         try {
             const newMessage = {
                 chatId: selectedChat._id,
                 sender: currentUser._id,
-                text: message
+                text: message,
+                image: image
             }
 
             socket.emit('send-message', {
@@ -101,6 +102,16 @@ function ChatArea({socket}) {
         return fname + ' ' + lname;
     }
 
+    const sendImage = async (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader(file);
+        reader.readAsDataURL(file);
+
+        reader.onloadend = async () => {
+            sendMesage(reader.result);
+        }
+    }
+
     useEffect(() => {
         getMessages();
         if(selectedChat?.lastMessage?.sender !== currentUser._id) {
@@ -168,7 +179,8 @@ function ChatArea({socket}) {
                             >
                             <div>
                                 <div className={isCurrentUserSender ? "send-message" : "received-message"}>
-                                    {msg.text}
+                                    <div>{msg.text}</div>
+                                    <div>{msg.image && <img src={msg.image} width='120' height='120' />}</div>
                                 </div>
                                 <div className='message-timestamp'
                                     style={isCurrentUserSender ? {float: 'right'} : {float: 'left'}}
@@ -183,8 +195,10 @@ function ChatArea({socket}) {
                 <div className='typing-indicator'>{isTyping && <i>typing...</i>}</div>
             </div>
             {
-                showEmojiPicker && <div>
-                    <EmojiPicker onEmojiClick={(e) => {setMessage(message + e.emoji)}} />
+                showEmojiPicker && <div style={{width: '100%', display: 'flex', padding: '0px 20px', justifyContent: 'right'}}>
+                    <EmojiPicker style={{width: '300px', height: '400px'}}
+                        onEmojiClick={(e) => {setMessage(message + e.emoji)}} 
+                    />
                 </div>
             }
             <div className="send-message-div">
@@ -201,6 +215,15 @@ function ChatArea({socket}) {
                         });
                     }}
                 />
+                <label htmlFor='file'>
+                    <i className='fa fa-picture-o send-image-btn'></i>
+                    <input type='file' 
+                        id='file'
+                        style={{display: 'none'}}
+                        accept='image/jpg,image/png,image/jpeg,image/gif'
+                        onChange={sendImage}
+                    />
+                </label>
                 <button className="fa fa-smile-o send-emoji-btn" 
                     aria-hidden="true"
                     onClick={() => {setShowEmojiPicker(!showEmojiPicker)}}
