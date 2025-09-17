@@ -9,7 +9,7 @@ const messageRouter = require('./controllers/messageController');
 const app = express();
 
 // converting req.body from json to js object
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 
 // creating server using http package
 const server = require('http').createServer(app);
