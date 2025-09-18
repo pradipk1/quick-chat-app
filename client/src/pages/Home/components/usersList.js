@@ -100,7 +100,7 @@ function UsersList({searchKey, socket, onlineUsers}) {
     }
 
     useEffect(() => {
-        socket.on('receive-message', (message) => {
+        socket.off('set-message-count').on('set-message-count', (message) => {
             let {selectedChat, allChats} = store.getState().userReducer;
 
             if(selectedChat?._id !== message.chatId) {

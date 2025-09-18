@@ -17,6 +17,7 @@ function ChatArea({socket}) {
     const [allMessages, setAllMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [data, setData] = useState(null);
 
     const sendMesage = async (image) => {
         setShowEmojiPicker(false);
@@ -71,12 +72,13 @@ function ChatArea({socket}) {
             const response = await clearUnreadMessageCount(selectedChat._id);
 
             if(response.success) {
-                allChats.map(chat => {
+                const updatedChats = allChats.map(chat => {
                     if(chat._id === selectedChat._id) {
                         return response.data;
                     }
                     return chat;
                 });
+                dispatch(setAllchats(updatedChats));
             }
         } catch (error) {
             toast.error(error.message);
@@ -118,7 +120,7 @@ function ChatArea({socket}) {
             clearUnreadMessages();
         }
 
-        socket.on('receive-message', message => {
+        socket.off('receive-message').on('receive-message', message => {
             const selectedChat = store.getState().userReducer.selectedChat;
 
             if(selectedChat._id === message.chatId) {
@@ -153,6 +155,7 @@ function ChatArea({socket}) {
         });
 
         socket.on('started-typing', data => {
+            setData(data);
             if(selectedChat._id === data.chatId && data.sender !== currentUser._id) {
                 setIsTyping(true);
                 setTimeout(() => setIsTyping(false), 2000);
@@ -192,7 +195,7 @@ function ChatArea({socket}) {
                         </div>
                     })
                 }
-                <div className='typing-indicator'>{isTyping && <i>typing...</i>}</div>
+                <div className='typing-indicator'>{isTyping && selectedChat?.members.map(m => m._id).includes(data?.sender) && <i>typing...</i>}</div>
             </div>
             {
                 showEmojiPicker && <div style={{width: '100%', display: 'flex', padding: '0px 20px', justifyContent: 'right'}}>

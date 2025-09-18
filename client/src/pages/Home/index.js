@@ -18,12 +18,12 @@ function Home() {
             socket.emit('join-room', currentUser._id);
 
             socket.emit('user-login', currentUser._id);
-            socket.on('online-users', onlineUsers => {
-                setOnlineUsers(onlineUsers);
+            socket.off('online-users').on('online-users', onlineusers => {
+                setOnlineUsers(onlineusers);
             });
 
-            socket.on('updated-online-users', onlineUsers => {
-                setOnlineUsers(onlineUsers);
+            socket.off('updated-online-users').on('updated-online-users', onlineusers => {
+                setOnlineUsers(onlineusers);
             });
         }
     }, [currentUser]);
