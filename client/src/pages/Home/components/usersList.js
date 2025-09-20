@@ -75,7 +75,7 @@ function UsersList({searchKey, socket, onlineUsers}) {
             chat.members.map(m => m._id).includes(userId)
         );
 
-        if(chat && chat.unreadMessageCount && chat.lastMessage.sender !== currentUser._id) {
+        if(chat && chat?.unreadMessageCount && chat.lastMessage?.sender !== currentUser._id) {
             return <div className="unread-message-counter">{chat.unreadMessageCount}</div>;
         } else {
             return "";
@@ -92,7 +92,7 @@ function UsersList({searchKey, socket, onlineUsers}) {
         if(searchKey === '') {
             return allChats;
         } else {
-            allUsers.filter(user => (
+            return allUsers.filter(user => (
                 user.firstname.toLowerCase().includes(searchKey) || 
                 user.lastname.toLowerCase().includes(searchKey)
             ));

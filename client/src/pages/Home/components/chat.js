@@ -30,16 +30,34 @@ function ChatArea({socket}) {
                 image: image
             }
 
-            socket.emit('send-message', {
-                ...newMessage,
-                members: selectedChat.members.map(m => m._id),
-                read: false,
-                createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
-            });
-
             response = await createNewMessage(newMessage);
 
             if(response.success) {
+                const message = response.data;
+                socket.emit('send-message', {
+                    ...message,
+                    members: selectedChat.members.map(m => m._id),
+                });
+
+                const updatedAllChats = allChats.map(chat => {
+                    if(chat._id === message.chatId) {
+                        return {
+                            ...chat,
+                            lastMessage: {
+                                ...chat.lastMessage,
+                                createdAt: message.createdAt,
+                                image:message.image,
+                                sender: message.sender,
+                                text: message.text,
+                                updatedAt: message.updatedAt,
+                                _id: message._id
+                            }
+                        }
+                    }
+                    return chat;
+                });
+                dispatch(setAllchats(updatedAllChats));
+
                 setMessage('');
             }
         } catch (error) {
@@ -121,6 +139,7 @@ function ChatArea({socket}) {
         }
 
         socket.off('receive-message').on('receive-message', message => {
+            // console.log(message);
             const selectedChat = store.getState().userReducer.selectedChat;
 
             if(selectedChat._id === message.chatId) {
