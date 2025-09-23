@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 const authRouter = require('./controllers/authController');
 const userRouter = require('./controllers/userController');
@@ -7,6 +8,9 @@ const messageRouter = require('./controllers/messageController');
 
 
 const app = express();
+
+// adding cors to handle the coming requests from other domain also
+app.use(cors());
 
 // converting req.body from json to js object
 app.use(express.json({limit: '50mb'}));
