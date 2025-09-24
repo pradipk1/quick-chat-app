@@ -6,7 +6,7 @@ import {io} from 'socket.io-client';
 import { useEffect, useState } from "react";
 
 // making a socket connection with server
-const socket = io('http://localhost:5000');
+const socket = io('https://quick-chat-app-server-eza8.onrender.com');
 
 function Home() {
     const {selectedChat, user: currentUser} = useSelector(state => state.userReducer);
