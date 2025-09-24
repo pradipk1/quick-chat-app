@@ -10,7 +10,7 @@ const messageRouter = require('./controllers/messageController');
 const app = express();
 
 // adding cors to handle the coming requests from other domain also
-app.use(cors({ origin: "*" }));
+app.use(cors());
 
 // converting req.body from json to js object
 app.use(express.json({limit: '50mb'}));
@@ -20,7 +20,7 @@ const server = require('http').createServer(app);
 
 // making a socket connection with the client
 const io = require('socket.io')(server, {cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://quick-chat-app-client-an3b.onrender.com',
     methods: ['GET', 'POST']
 }});
 
