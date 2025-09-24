@@ -136,7 +136,7 @@ function UsersList({searchKey, socket, onlineUsers}) {
         .map((obj) => {
             let user = obj;
             if(obj.members) {
-                user = obj.members.find(m => m._id !==currentUser._id);
+                user = obj.members.find(m => m._id !== currentUser?._id);
             }
             return (
                 <div className="user-search-filter" onClick={() => {openChat(user._id)}} key={user._id}>
