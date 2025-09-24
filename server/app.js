@@ -10,7 +10,7 @@ const messageRouter = require('./controllers/messageController');
 const app = express();
 
 // adding cors to handle the coming requests from other domain also
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
 // converting req.body from json to js object
 app.use(express.json({limit: '50mb'}));
