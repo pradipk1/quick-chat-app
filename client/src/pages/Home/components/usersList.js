@@ -55,7 +55,7 @@ function UsersList({searchKey, socket, onlineUsers}) {
         if(!chat || !chat.lastMessage) {
             return '';
         } else {
-            const msgPref = chat.lastMessage?.sender === currentUser._id ? 'You: ' : '';
+            const msgPref = chat.lastMessage?.sender === currentUser?._id ? 'You: ' : '';
             return msgPref + chat.lastMessage?.text.substring(0, 25);
         }
     }
