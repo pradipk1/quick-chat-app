@@ -7,6 +7,12 @@ const chatRouter = require('./controllers/chatController');
 const messageRouter = require('./controllers/messageController');
 
 
+// Allow both localhost (dev) and render client (prod)
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://quick-chat-app-client-an3b.onrender.com"
+];
+
 const app = express();
 
 // adding cors to handle the coming requests from other domain also
@@ -20,7 +26,7 @@ const server = require('http').createServer(app);
 
 // making a socket connection with the client
 const io = require('socket.io')(server, {cors: {
-    origin: 'https://quick-chat-app-client-an3b.onrender.com',
+    origin: allowedOrigins,
     methods: ['GET', 'POST']
 }});
 
